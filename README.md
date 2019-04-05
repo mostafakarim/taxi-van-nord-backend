@@ -5,6 +5,8 @@ A Stripe Node.js Boilerplate
 ## Prerequisites
 [Node.js (v9)](https://nodejs.org/en/)
 
+[Stripe Account](https://dashboard.stripe.com/register)
+
 ## Instructions
 
 Follow the steps below to get the app running on your local machine.
