@@ -12,7 +12,7 @@ var app = express();
 // view engine setup (Handlebars)
 app.set('view engine', 'hbs');
 app.engine('hbs', exphbs({
-	extname: '.hbs'
+  extname: '.hbs'
 }));
 app.set('views','./views');
 
@@ -28,8 +28,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // include flash messages and Stripe publishable key in session
 app.use(function(req, res, next) {
-	res.locals.message = req.flash('success');
-	res.locals.STRIPE_PUBLISHABLE_KEY = process.env.STRIPE_PUBLISHABLE_KEY
+  res.locals.message = req.flash('success');
+  res.locals.STRIPE_PUBLISHABLE_KEY = process.env.STRIPE_PUBLISHABLE_KEY
   next();
 });
 
@@ -38,16 +38,16 @@ app.use(require('./controllers'));
 
 // error handling
 app.use((err, req, res, next) => {
-	console.log(err);
-	res.render('pages/error', { error: err});
+  console.log(err);
+  res.render('pages/error', { error: err});
 });
 
 //start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, (err) => {
-	if (err) {
-		console.log(err);
-	} else {
-		console.log('Getting served on port ' + PORT);
-	}
+  if (err) {
+    console.log(err);
+  } else {
+    console.log('Getting served on port ' + PORT);
+  }
 });
