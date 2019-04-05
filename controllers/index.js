@@ -6,14 +6,14 @@ const router = express.Router();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 /**
- * base route
+ * Base route
  */
 router.get('/', function(req, res) {
   res.render('pages/index');
 });
 
 /**
- * Create charge
+ * Create a charge
  */
 router.post('/charge', async function(req, res) {
   const token = req.body.stripeToken;
