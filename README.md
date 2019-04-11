@@ -2,7 +2,7 @@
 
 A Stripe Node.js Boilerplate
 
-![App Screenshot](https://mattmitchell.box.com/shared/static/28qfktxy5zimtgoda4gctavp8n2jkdx1.png)
+![App Screenshot](public/img/screenshot.png)
 
 ## Prerequisites
 [Node.js (v9)](https://nodejs.org/en/)
