@@ -15,7 +15,7 @@ Follow the steps below to get the app running on your local machine.
 
 First, clone the repository and install dependencies.
 ```bash
-$ git clone https://github.com/mattmitchell6/stripe-node-boilerplate.git
+$ git clone https://git.corp.stripe.com/stripe-internal/sales-node-demo-boilerplate.git
 $ cd stripe-node-boilerplate
 $ npm install
 ```
