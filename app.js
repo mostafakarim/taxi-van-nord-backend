@@ -2,7 +2,6 @@ const express = require('express');
 const path = require('path');
 const exphbs = require('express-handlebars')
 const hbs = require('hbs')
-const flash = require('connect-flash');
 require('dotenv').config();
 require('express-async-errors');
 
@@ -23,13 +22,12 @@ hbs.registerPartials(__dirname + '/views/partials');
 app.use(require('cookie-parser')());
 app.use(require('body-parser').urlencoded({ extended: true }));
 app.use(require('express-session')({ secret: 'unique-secret', resave: false, saveUninitialized: false }));
-app.use(flash());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// include flash messages and Stripe publishable key in session
+// include Stripe publishable key in session
 app.use(function(req, res, next) {
-  res.locals.message = req.flash('success');
   res.locals.STRIPE_PUBLISHABLE_KEY = process.env.STRIPE_PUBLISHABLE_KEY
+  res.locals.layout = false;
   next();
 });
 

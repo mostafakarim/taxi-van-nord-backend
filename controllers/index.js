@@ -6,27 +6,17 @@ const router = express.Router();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 /**
- * Base route
+ * Base route, create PaymentIntent
  */
-router.get('/', function(req, res) {
-  res.render('pages/index');
-});
-
-/**
- * Create a charge
- */
-router.post('/charge', async function(req, res) {
-  const token = req.body.stripeToken;
-
-  const charge = await stripe.charges.create({
+router.get('/', async function(req, res) {
+  const paymentIntent = await stripe.paymentIntents.create({
     amount: 2000,
-    currency: "usd",
-    source: token, // obtained with Stripe.js
-    description: "Sample charge"
+    currency: "usd"
   });
-
-  req.flash('success', `Successfully charged $${charge.amount / 100}! Your charge ID is ${charge.id}.`)
-  res.redirect('/')
+  
+  res.render('pages/index', {
+    clientSecret: paymentIntent.client_secret
+  });
 });
 
 module.exports = router;

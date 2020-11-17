@@ -4,25 +4,21 @@
 
 <div class="container mtm">
   <div class="row">
-    <!-- flash messages -->
-    {{#if message}}
-      <div class="col col-md-8 offset-md-2">
-        <div class="alert alert-success mbs" role="alert">
-          {{message}}
-          <button type="button" class="close mls" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-      </div>
-    {{/if}}
 
     <div class="col col-md-8 offset-md-2">
       <form action="/charge" method="post" id="payment-form">
         <label for="card-element">Credit or debit card</label>
         <div id="card-element"></div>
         <div id="card-errors" role="alert"></div>
-        <button class="btn btn-primary mts">Submit Payment</button>
+        <button class="btn btn-primary mts">
+          <span id="button-text">Submit Payment</span>
+        </button>    
       </form>
+
+      <p class="result-message hidden mtm">
+        Payment succeeded, see the result in your
+        <a href="" target="_blank">Stripe dashboard.</a> Refresh the page to pay again.
+      </p>
     </div>
 
   </div>
@@ -42,8 +38,10 @@
   card.addEventListener('change', function(event) {
     var displayError = document.getElementById('card-errors');
     if (event.error) {
+      document.querySelector("button").disabled = true;
       displayError.textContent = event.error.message;
     } else {
+      document.querySelector("button").disabled = false;
       displayError.textContent = '';
     }
   });
@@ -52,32 +50,47 @@
   var form = document.getElementById('payment-form');
   form.addEventListener('submit', function(event) {
     event.preventDefault();
+    submitting(true)
 
-    stripe.createToken(card).then(function(result) {
+    stripe.confirmCardPayment("{{clientSecret}}", {
+      payment_method: {
+        card: card
+      }
+    }).then(function(result) {
       if (result.error) {
+        submitting(false)
         // Inform the user if there was an error.
         var errorElement = document.getElementById('card-errors');
         errorElement.textContent = result.error.message;
       } else {
-        // Send the token to your server.
-        stripeTokenHandler(result.token);
+        orderComplete(result.paymentIntent.id);
       }
     });
   });
 
-  // Submit the form with the token ID.
-  function stripeTokenHandler(token) {
-    // Insert the token ID into the form so it gets submitted to the server
-    var form = document.getElementById('payment-form');
-    var hiddenInput = document.createElement('input');
-    hiddenInput.setAttribute('type', 'hidden');
-    hiddenInput.setAttribute('name', 'stripeToken');
-    hiddenInput.setAttribute('value', token.id);
-    form.appendChild(hiddenInput);
-
-    // Submit the form
-    form.submit();
+  // Show success message when payment is complete
+  function orderComplete(paymentIntentId) {
+    submitting(false)
+    document
+      .querySelector(".result-message a")
+      .setAttribute(
+        "href",
+        "https://dashboard.stripe.com/test/payments/" + paymentIntentId
+      );
+    document.querySelector(".result-message").classList.remove("hidden");
+    document.querySelector("#payment-form").classList.add("hidden")
   }
+
+  // Update button submitting state
+  var submitting = function(isSubmitting) {
+    if (isSubmitting) {
+      document.querySelector("button").disabled = true;
+      document.querySelector("#button-text").textContent = "Submitting Payment..."
+    } else {
+      document.querySelector("button").disabled = false;
+      document.querySelector("#button-text").textContent = "Submit Payment"
+    }
+  };  
 </script>
 
 {{/inline}}
