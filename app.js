@@ -2,6 +2,9 @@ const express = require('express');
 const path = require('path');
 const exphbs = require('express-handlebars')
 const hbs = require('hbs')
+const cors = require('cors')
+const bodyParser = require('body-parser')
+
 require('dotenv').config();
 require('express-async-errors');
 
@@ -30,7 +33,8 @@ app.use(function(req, res, next) {
   res.locals.layout = false;
   next();
 });
-
+app.options('*', cors())
+app.use(bodyParser.json());
 // load controllers & routes
 app.use(require('./controllers'));
 
