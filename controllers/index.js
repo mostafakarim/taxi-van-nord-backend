@@ -6,7 +6,7 @@ const router = express.Router();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cors = require('cors')
 var corsOptions = {
-  origin: 'https://localhost:3000',
+  origin: process.env.FRONTEND_URL,
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
