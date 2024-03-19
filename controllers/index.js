@@ -37,6 +37,10 @@ console.log(req.body);
   }
 });
 
+router.get('/health',cors(corsOptions), async function(req, res) {
+  res.status(200).send('success !');
+});
+
 
 
 module.exports = router;
