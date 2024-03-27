@@ -12,17 +12,56 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: '>Forbidden access' });
+  res.render('index', { title: 'Forbidden access' });
 });
 
 router.post('/create-payment-intent', async function(req, res, next) {
-console.log(process.env.STRIPE_SECRET_KEY);
   try {
     const paymentIntent = await stripe.paymentIntents.create({
       ...req.body
     });
-    res.json({ clientSecret: paymentIntent.client_secret });
+    res.json({paymentIntentId: paymentIntent.id, clientSecret: paymentIntent.client_secret, });
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/update-payment-intent/:paymentIntentId', async function(req, res, next) {
+  const {firstname, lastname, phone, reply_to } = req.body.client;
+  const customerPayload = {
+    name: `${firstname} ${lastname}`,
+    metadata: {
+      phone: phone,
+      firstname,
+      lastname,
+    }
+  }
+  try {
+    let customer = null;
+    const customers = await stripe.customers.search({
+      query: `email:"${reply_to}"`,
+    });
+
+    if(customers.data.length === 0) {
+      customer = await stripe.customers.create({
+        email: reply_to,
+        ...customerPayload
+      });
+    } else {
+      customer = await stripe.customers.update(customers.data[0].id, {
+        ...customerPayload
+      });
+    }
+
+    const paymentIntentId = req.params.paymentIntentId;
+    const {amount, ...metadata} = req.body.booking;
+    const payment = await stripe.paymentIntents.update(paymentIntentId, {
+      customer: customer.id,
+      metadata
+    });
+    
+    res.json(payment);
+  } catch(error) {
     res.status(500).json({ error: error.message });
   }
 });

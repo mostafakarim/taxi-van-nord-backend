@@ -6,7 +6,12 @@ var logger = require('morgan');
 
 var indexRouter = require('./api/index');
 var usersRouter = require('./api/users');
-const cors = require('cors')
+const cors = require('cors');
+const fs = require('fs');
+const key = fs.readFileSync('./key.pem');
+const cert = fs.readFileSync('./cert.pem');
+const https = require('https');
+
 var app = express();
 app.use(cors())
 
@@ -40,8 +45,16 @@ app.use(function(err, req, res, next) {
 });
 
 //start server
-const PORT = process.env.PORT || 3030;
-app.listen(PORT, (err) => {
+var privateKey  = fs.readFileSync('./server.key', 'utf8');
+var certificate = fs.readFileSync('./server.crt', 'utf8');
+const server = https.createServer({
+  key: privateKey,
+  cert: certificate,
+  requestCert: false,
+  rejectUnauthorized: false
+}, app);
+const PORT = process.env.PORT || 3001;
+server.listen(PORT, (err) => {
   if (err) {
     console.log(err);
   } else {
