@@ -12,8 +12,19 @@ const key = fs.readFileSync('./key.pem');
 const cert = fs.readFileSync('./cert.pem');
 const https = require('https');
 
+var whitelist = ['localhost', process.env.FRONTEND_URL]
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+
 var app = express();
-app.use(cors())
+app.use(cors(corsOptions))
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
