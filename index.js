@@ -8,8 +8,8 @@ var indexRouter = require('./api/index');
 var usersRouter = require('./api/users');
 const cors = require('cors');
 const fs = require('fs');
-const key = fs.readFileSync('./key.pem');
-const cert = fs.readFileSync('./cert.pem');
+/* const key = fs.readFileSync('./key.pem');
+const cert = fs.readFileSync('./cert.pem'); */
 const https = require('https');
 
 var whitelist = ['localhost', process.env.FRONTEND_URL]
@@ -56,11 +56,11 @@ app.use(function(err, req, res, next) {
 });
 
 //start server
-var privateKey  = fs.readFileSync('./server.key', 'utf8');
-var certificate = fs.readFileSync('./server.crt', 'utf8');
+/* var privateKey  = fs.readFileSync('./server.key', 'utf8');
+var certificate = fs.readFileSync('./server.crt', 'utf8'); */
 const server = https.createServer({
-  key: privateKey,
-  cert: certificate,
+  //key: privateKey,
+  //cert: certificate,
   requestCert: false,
   rejectUnauthorized: false
 }, app);
